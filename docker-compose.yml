@@ -7,18 +7,18 @@ services:
       - "8000:80"
     volumes:
       - ./nginx/logs:/var/log/nginx
-      - ./app:/usr/share/nginx/html
+      - ./app:/var/www/html
     depends_on:
       - php
 
   php:
-    build: ./php-fpm71-alpine
+    build: ./php71
     expose:
       - "9000"
     volumes:
-      - ./app:/usr/share/nginx/html
-      - ./php-fpm71-alpine/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
-      - ./php-fpm71-alpine/logs/:/var/log/
+      - ./app:/var/www/html
+      - ./php71/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./php71/logs/:/var/log/
     depends_on:
       - mysql
       - redis
