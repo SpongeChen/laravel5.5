@@ -7,6 +7,16 @@ use App\Models\User;
 
 class UsersController extends Controller
 {
+	public function __construct()
+	{
+		// 中间件身份验证
+		$this->middleware('auth', [
+			'except' => ['show', 'create', 'store']
+		]);
+		$this->middleware('guest', [
+            'only' => ['create']
+        ]);
+	}
 	// 注册页
 	public function create()
     {
@@ -16,6 +26,12 @@ class UsersController extends Controller
     // 编辑页
     public function edit(User $user)
     {
+    	try {
+            $this->authorize ('update', $user);
+            return view ('users.edit', compact ('user'));
+        } catch (\Exception $e) {
+            abort(500, $e->getMessage());
+        }
     	return view('users.edit', compact('user'));
     }
 
@@ -33,6 +49,8 @@ class UsersController extends Controller
             'email' => 'required|email|unique:users|max:255',
             'password' => 'required|confirmed|min:6'
         ]);
+
+        $this->authorize('update', $user);
 
         $user = User::create([
             'name' => $request->name,
