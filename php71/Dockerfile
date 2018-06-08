@@ -3,6 +3,9 @@ FROM php:7.1-fpm
 # redis 版本
 ENV PHPREDIS_VERSION 3.1.6
 
+# 时区
+ENV TIMEZONE Asia/Shanghai
+
 # 安装composer
 COPY composer.phar /usr/local/bin/composer
 
@@ -17,6 +20,8 @@ RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak \
     && mv /etc/apt/china.sources.list /etc/apt/sources.list \
     && apt-get update \
     && docker-php-ext-install mysqli pdo_mysql \
+  # 时区
+    && ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   # redis 扩展
     && curl -L -o /tmp/redis.tar.gz https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz \
     && tar xfz /tmp/redis.tar.gz \
