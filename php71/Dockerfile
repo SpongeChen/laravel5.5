@@ -1,4 +1,4 @@
-FROM php:7.1-fpm
+FROM php:7.2-fpm
 
 # redis 版本
 ENV PHPREDIS_VERSION 3.1.6
@@ -10,16 +10,20 @@ ENV TIMEZONE Asia/Shanghai
 COPY composer.phar /usr/local/bin/composer
 
 # 换源文件
-COPY sources.list /etc/apt/china.sources.list
+COPY sources.list /etc/apt/sources.list
 
 # 工作目录
 WORKDIR /var/www/html
 
-# 修改为国内源
-RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak \
-    && mv /etc/apt/china.sources.list /etc/apt/sources.list \
-    && apt-get update \
+RUN apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libmcrypt-dev \
+        libpng-dev \
+  # 这里是docker提供的安装php扩展的方法，在这里安装了pdo_mysql扩展还有GD库等      
     && docker-php-ext-install mysqli pdo_mysql \
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd \
   # 时区
     && ln -snf /usr/share/zoneinfo/$TIMEZONE /etc/localtime \
   # redis 扩展
