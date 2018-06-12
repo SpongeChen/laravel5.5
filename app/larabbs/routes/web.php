@@ -38,8 +38,14 @@ Auth::routes();
 // 自动生成不需要
 // Route::get('/home', 'HomeController@index')->name('home');
 
-Route::resource('users', 'UsersController', ['only' => ['show', 'update', 'edit']]);
+Route::resource('/users', 'UsersController', ['only' => ['show', 'update', 'edit']]);
 // 以上 等同于 以下
 // Route::get('/users/{user}', 'UsersController@show')->name('users.show');
 // Route::get('/users/{user}/edit', 'UsersController@edit')->name('users.edit');
 // Route::patch('/users/{user}', 'UsersController@update')->name('users.update');
+
+// 话题
+Route::resource('/topics', 'TopicsController', ['only' => ['index', 'show', 'create', 'store', 'update', 'edit', 'destroy']]);
+
+// 分类
+Route::resource('categories', 'CategoriesController', ['only' => ['show']]);
